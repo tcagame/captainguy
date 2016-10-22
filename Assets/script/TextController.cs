@@ -3,7 +3,13 @@ using System.Collections;
 using UnityEngine.UI;
 
 public class TextController : MonoBehaviour {
-	public GameObject btn;
+
+	public SoundManager soundManager;
+	public VoiceManager voiceManager;
+
+	public GameObject StartButton;
+	public GameObject vodke;
+	public GameObject SkipButton;
 	public string[] scenarios;
 	[SerializeField]Text uiText;
 
@@ -15,6 +21,10 @@ public class TextController : MonoBehaviour {
 	private float timeUntilDisplay = 0;
 	private float timeElapsed = 1;
 	private int lastUpdateCharacter = -1;
+	private int count = 1;//Screenを押すカウント
+
+	bool IsStartButtonActive = false;
+
 
 	public bool IsCompleteDisplayText {
 		get{ return Time.time > timeElapsed + timeUntilDisplay;}	
@@ -22,23 +32,34 @@ public class TextController : MonoBehaviour {
 
 	void Start () {
 		
-		SetNextLine ();
+		SetNextLine (0);
+		voiceManager.PlayVoice(count);
+		vodke = GameObject.Find ("Vodke");
+		SkipButton = GameObject.Find ("SkipButton");
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		if (IsCompleteDisplayText) {		
-			if (currentLine < scenarios.Length && Input.GetMouseButtonDown (0)) {
-				SetNextLine ();
+		if (IsCompleteDisplayText) {
+			
+			if (currentLine < scenarios.Length && Input.GetMouseButtonDown (0) && count < 15 && IsStartButtonActive == false) {
+				count++;
+				voiceManager.PlayVoice (count);
+				soundManager.PlaySeButton ();
+				SetNextLine (0);
+			}
+			if (count == 11) {
+				vodke.SetActive (false);
 			}
 		} else {
 			if (Input.GetMouseButtonDown (0)) {
 				timeUntilDisplay = 0;
+
 			} 
 
-			if (currentText == scenarios [4]) {
-				btn.SetActive (true);
+			if (currentText == scenarios [14]) {
+				Invoke ("StartButtonAlive", 2);
 			}
 		} 
 
@@ -50,7 +71,8 @@ public class TextController : MonoBehaviour {
 		}
 	}
 
-	void SetNextLine() {
+	public void SetNextLine(int LineCount) {
+		LineCount = currentLine;
 		currentText = scenarios [currentLine];
 		currentLine++;
 
@@ -59,5 +81,31 @@ public class TextController : MonoBehaviour {
 
 		lastUpdateCharacter = -1;
 	}
+
+	public void OnSkipButtonCliked() {
+		
+		currentText = scenarios [15];
+		soundManager.PlaySeButton ();
+		voiceManager.StopVoice ();
+		IsStartButtonActive = true;
+		StartButton.SetActive (true);
+		SkipButton.SetActive (false);
+
+	}
+	public void LoadSceneBattle() {
+		Application.LoadLevel("tutorial");
+	}
+
+	public void OnStartButtonClicked(){
+		Invoke ("LoadSceneBattle", 1);
+		soundManager.PlaySeGameStart ();
+		soundManager.StopSeButton ();
+		currentText = scenarios [15];
+		voiceManager.StopVoice ();
+	}
+	public void StartButtonAlive() {
+		StartButton.SetActive (true);
+	}
+
 
 }
