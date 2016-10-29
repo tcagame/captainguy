@@ -5,39 +5,27 @@ using UnityEngine.SceneManagement;
 
 public class ResultsController : MonoBehaviour {
 
-	const float MAX_HP = 100;
-	const float HALF_HP = 50;
-	const float MIN_HP = 0;
 
 	[SerializeField] GameLogic gameLogic;
+    [SerializeField]BalloonController balloonController;
 
-	float alpha = 0.0f;
-	private int Color;
+    private float coun = 0.0f;
+	private float alpha = 0.0f;
 	private GameObject clear;
 	private GameObject gameOver;
-	public GameObject retry;
-	public GameObject title;
-	public GameObject moveControllerPanel;
-    private GameObject balloonStatus;
-
-	public GameObject bossHp;
-	public GameObject playerHp;
-	public GameObject stamina;
-
-	private GameObject boss;
-	private GameObject enemy;
 	private GameObject clearImage;
 	private GameObject overImage;
-	public GameObject player;
 
-	private float count;
+    public bool reEvent;
+
+	
 
 	void Awake( ) {
 		clear = GameObject.Find ("GameClear");
 		gameOver = GameObject.Find ("GameOver");
 		clearImage = GameObject.Find ("CLEAR!");
 		overImage = GameObject.Find ("game_over2");
-		balloonStatus = GameObject.Find ("TextController");
+        reEvent = true;
 	}
 
 	// Use this for initialization
@@ -46,13 +34,16 @@ public class ResultsController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
 	}
 
 	public void GameClear( ) {
-		moveControllerPanel.SetActive (false);
-		bossHp.SetActive (false);
-		playerHp.SetActive (false);
-		stamina.SetActive (false);
+
+		if (clearImage.transform.position.y <= 2.0f) {
+            reEvent = false;
+            return;
+		}
+		
 		if (alpha <= 0.6f) {
 			// フェードアウト
 			alpha += 0.01f;
@@ -60,41 +51,29 @@ public class ResultsController : MonoBehaviour {
 		}
 
 		if ( alpha > 0.6f && clearImage.transform.position.y > 2.0f ) {
-			balloonStatus.GetComponent<BalloonController> ().BalloonDestroy ();
+			balloonController.BalloonDestroy();
 			clearImage.transform.position -= new Vector3 (0, 0.05f, 0 );
 		}
 
-		if (clearImage.transform.position.y <= 2.0f) {
-			retry.SetActive (true);
-			title.SetActive (true);
-		}
 	}
 
 	public void GameOver( ) {
-		moveControllerPanel.SetActive (false);
+
+		if (overImage.transform.position.y <= 2.0f) {
+            reEvent = false;
+            return;
+		}
+		
 		if (alpha <= 0.6f) {
+            // フェードアウト
 			alpha += 0.01f;
 			gameOver.GetComponent<SpriteRenderer> ().color = new Color ( 0, 0, 0, alpha);
 		}
 
-		if ( alpha > 0.6f && overImage.transform.position.y > 2.0f ) {
-			bossHp.SetActive (false);
-			playerHp.SetActive (false);
-			stamina.SetActive (false);
+		if ( alpha > 0.6f && overImage.transform.position.y > 2.0f ) {			
 			overImage.transform.position -= new Vector3 (0, 0.05f, 0 );
 		}
 
-		if (overImage.transform.position.y <= 2.0f) {
-			retry.SetActive (true);
-			title.SetActive (true);
-		}
 	}
 
-	public void OnRetryButtonClicked() {
-		SceneManager.LoadScene ("Battle");
-	}
-
-	public void OnOverButtonClicked() {
-		SceneManager.LoadScene ("Title");
-	}
 }
