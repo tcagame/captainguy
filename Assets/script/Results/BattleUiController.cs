@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleUiManager : MonoBehaviour {
+public class BattleUiController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
