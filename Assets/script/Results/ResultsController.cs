@@ -9,8 +9,6 @@ public class ResultsController : MonoBehaviour {
 	const float HALF_HP = 50;
 	const float MIN_HP = 0;
 
-	[SerializeField] GameLogic gameLogic;
-
 	float alpha = 0.0f;
 	private int Color;
 	private GameObject clear;
@@ -70,7 +68,7 @@ public class ResultsController : MonoBehaviour {
 		}
 	}
 
-	public void GameOver( ) {
+	public void GameOver() {
 		moveControllerPanel.SetActive (false);
 		if (alpha <= 0.6f) {
 			alpha += 0.01f;

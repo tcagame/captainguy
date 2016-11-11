@@ -14,10 +14,7 @@ public class GameLogic : MonoBehaviour {
 		Start,
 		Clear,
 		Over
-	};
-
-	const int MAX_HP = 100;
-	const int MIN_HP = 0;
+	}; 
 
 	public int gameStatus;
 
