@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour {
     GameObject boss;
     public GameObject TextController;
 
-	public SoundManager soundManager;
 
 	public bool isGrounded = false;
 	Transform tagGround;
@@ -113,13 +112,13 @@ public class PlayerController : MonoBehaviour {
 			        if ( staminaSlider.value > ATTACK_CONSUME ) {
 				        animator.SetTrigger ("Attack");
 				        staminaSlider.value -= STAMINA_CONSUME;
-				        soundManager.PlaySePunch ();
+				        //soundManager.PlaySePunch ();
 			        }
 		        }
 
 		        if ( Input.GetButtonDown ("Jump") ) {
 				    rig2d.velocity = new Vector2( rig2d.velocity.x, jumpPower );
-				    soundManager.PlaySeJump ();
+				  
 		        }
             }
         }
@@ -209,7 +208,7 @@ public class PlayerController : MonoBehaviour {
                      ( distanceCheckX < 0 && spriteRenderer.flipX == true ) ) {
 				    block[i].GetComponent<BlockController> ().BlockDestroyAni ();
                     Debug.Log( "" + i );
-					soundManager.PlaySeBlock ();
+					//soundManager.PlaySeBlock ();
                 }
 			}
 		}
