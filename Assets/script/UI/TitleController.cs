@@ -65,7 +65,7 @@ public class TitleController : MonoBehaviour {
 			Application.LoadLevel ("Title");
         }
         else if( ButtonName == ( int )BUTTON_LIST.EXIT ) {
-			
+			Application.Quit();
             //If we are running in a standalone build of the game
 	        #if UNITY_STANDALONE
 		    //Quit the application
