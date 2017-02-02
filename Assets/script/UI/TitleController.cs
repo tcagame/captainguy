@@ -1,101 +1,111 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class TitleController : MonoBehaviour {
-
+    private enum BUTTON_LIST {
+        NEW_GAME,
+        OPTION,
+        CREDIT,
+        EXIT,
+        //OnStageIntroducePanel
+        GO
+    }
+    [SerializeField]MoveController movieController;
     public GameObject MenuPanel;
     public GameObject VolumePanel;
-    public GameObject OptionPanel;
     public GameObject StageSelectPanel;
-    public GameObject LevelSelectPanel;
-    public GameObject LaunchPanel;
     public GameObject CharatePanel;
     public GameObject[] OptionBackButton;
     public GameObject StageSelectBackButton;
     public GameObject Exit;
     public GameObject[] BackButton;
 	public GameObject StageIntrodudePanel;
-	public GameObject RecordPanel;
 	public GameObject CharacterIntrodudePanel;
-	public GameObject Chicken;
+    public GameObject MovieController;
+	
+    public GameObject[ ] MainButton;
+    public GameObject[ ] ButtonEffect;
+
+	public Slider BgmSlider;
+	public Slider SeSlider;
+	public Slider VoiceSlider;
+
+	private const float startValue = 0.5f;
 
 
 
     //メーニュー切り替え処理
 
+  
+    public void OnMainButtonCliked( int ButtonName ) {
+		
+        EffectOn( ButtonName );
+        Invoke( "EffectOff", 1 ); 
+		SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.ButtonDecide);
+        //ニューゲームボタン
+        if ( ButtonName == ( int )BUTTON_LIST.NEW_GAME ) {
+			
+            MenuPanel.SetActive( false );
+            StageSelectPanel.SetActive(true);
 
-    //ニューゲームボタン
-    public void OnNewGameButtonClicked() {
-        MenuPanel.SetActive( false );
-        LevelSelectPanel.SetActive( true );
+        }
 
+         //オプションメーニュー選択ボタン
+		else if( ButtonName == ( int )BUTTON_LIST.OPTION ) {
+			
+            MenuPanel.SetActive(false);
+            VolumePanel.SetActive(true);
+
+        }
+        //レコードボタン
+		else if( ButtonName == ( int )BUTTON_LIST.CREDIT ) {
+			
+            MenuPanel.SetActive( false );
+			Application.LoadLevel ("Title");
+        }
+        else if( ButtonName == ( int )BUTTON_LIST.EXIT ) {
+			
+            //If we are running in a standalone build of the game
+	        #if UNITY_STANDALONE
+		    //Quit the application
+		    Application.Quit();
+    	    #endif
+
+		    //If we are running in the editor
+	        #if UNITY_EDITOR
+		    //Stop playing the scene
+		    UnityEditor.EditorApplication.isPlaying = false;
+	        #endif
+        }
+
+       
     }
-
-    //レベル選択ボタン
-    public void OnLevelSelectButtonCliked() {
-        LevelSelectPanel.SetActive( false );
-        StageSelectPanel.SetActive( true );
-
+    
+    void EffectOn( int button ) {
+        ButtonEffect[ button ].SetActive( true );
     }
+		
 
-    //オプションメーニュー選択ボタン
-    public void OnOptionButtonClicked() {
-        MenuPanel.SetActive( false );
-        OptionPanel.SetActive( true );
-
-    }
-
-    //言語選択メーニューボタン
-    public void OnLaunchButtonClicked() {
-        OptionPanel.SetActive( false );
-        LaunchPanel.SetActive( true );
-
-    }
-
-    //文字サイズメーニュー選択ボタン
-    public void OnCharateButtonCliked() {
-        OptionPanel.SetActive( false );
-        CharatePanel.SetActive( true );
-
-    }
-
-    //音量選択メーニューボタン
-    public void OnVolumeButtonCliked() {
-        OptionPanel.SetActive( false );
-        VolumePanel.SetActive( true );
-
-    }
-	//レコードボタン
-	public void OnRecordButtonCliked() {
-		MenuPanel.SetActive( false );
-		RecordPanel.SetActive( true );
-
-	}
     //一個前メーニューに戻るボタン
     public void OnOptionBackButton() {
-        if ( LaunchPanel == true ) {
-            LaunchPanel.SetActive( false );
-        }
-        if ( VolumePanel == true ) {
-            VolumePanel.SetActive( false );
-        }
-        if ( CharatePanel == true ) {
-            CharatePanel.SetActive( false );
-        }
-        OptionPanel.SetActive( true );
-
-
+        MenuPanel.SetActive(true);
+        VolumePanel.SetActive(false);
+		ButtonEffect[ 1 ].SetActive( false );
+		SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.Back);
     }    
 
     public void OnStageSelectBackButtonCliked() {
         StageSelectPanel.SetActive( false );
-        LevelSelectPanel.SetActive( true );
+        MenuPanel.SetActive(true);
+		ButtonEffect[ 0 ].SetActive( false );
+		SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.Back);
 
     }
     public void OnStartButtonCliked() {
 		StageSelectPanel.SetActive( false );
 		StageIntrodudePanel.SetActive( true );
-
+		SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.ButtonDecide);
     }
 
 	/*public void TalkingScenePanelTouch() {
@@ -114,46 +124,57 @@ public class TitleController : MonoBehaviour {
 	}
 	public void OnRecordSyagaButtonCliked() {
 		
-		RecordPanel.SetActive( false );
+		//RecordPanel.SetActive( false );
 		CharacterIntrodudePanel.SetActive( true );
 	}
 	public void OnCharacterIntroduceBackButtonCliked() {
 		CharacterIntrodudePanel.SetActive (false);
-		RecordPanel.SetActive (true);
+		//RecordPanel.SetActive (true);
 
 	}
-	public void OnNotYetButtonClicked(){
-		StageIntrodudePanel.SetActive (false);
-		StageSelectPanel.SetActive (true);
 
-	}
 
     //メインメーニューに戻るボタン
     public void OnBackButtonCliked() {
-        LevelSelectPanel.SetActive( false );
-        OptionPanel.SetActive( false );
-		RecordPanel.SetActive( false );
+        //OptionPanel.SetActive( false );
         MenuPanel.SetActive( true );
 
     }
 
-    public void ExitButtonCliked()
-	{
-		//If we are running in a standalone build of the game
-	#if UNITY_STANDALONE
-		//Quit the application
-		Application.Quit();
-	#endif
+	public void OnStageIntroduceButtonCliked( int ButtonName) {
+        EffectOn(ButtonName);
+        //Invoke("EffectOff", 1);
 
-		//If we are running in the editor
-	#if UNITY_EDITOR
-		//Stop playing the scene
-		UnityEditor.EditorApplication.isPlaying = false;
-	#endif
+        if (ButtonName == (int)BUTTON_LIST.GO)
+        {
+            Invoke("LoadSceneTalking", 1);
+			SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.ButtonGo);
+
+        }
 
 	}
 
-	public void OnStageIntroduceButtonCliked() {
+    public void OnNotYetButtonClicked()
+    {
+
+        StageIntrodudePanel.SetActive(false);
+        StageSelectPanel.SetActive(true);
+		SoundManager.Instance.PlaySE ((int)SoundManager.SE_LIST.ButtonDecide);
+    }
+
+
+
+	void Awake( ) {
+		SoundManager.Instance.PlayBGM ((int)SoundManager.BGM_LIST.TilteMenu);
+		BgmSlider.value = startValue;
+		SeSlider.value = startValue;
+		VoiceSlider.value = startValue;
 		
+	}
+	void Update( ) {
+		SoundManager.Instance.BGMsource.volume = BgmSlider.value;
+		SoundManager.Instance.SEsources.volume = SeSlider.value;
+		SoundManager.Instance.VoiceSources.volume = VoiceSlider.value;
+
 	}
 }
